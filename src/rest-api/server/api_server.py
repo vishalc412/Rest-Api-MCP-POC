@@ -18,10 +18,11 @@ def get_db():
 async def root():
     return {"message": "Hello World"}
 
-@app.post("/users",response_model=User)
+@app.post("/users", response_model=User)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     """Create a new user"""
-    db_user = UserDB(**user.disct())
+    # Fixed: Changed 'disct()' to 'dict()'
+    db_user = UserDB(**user.dict())
     try:
         db.add(db_user)
         db.commit()
@@ -31,14 +32,14 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.get("/user", response_model=List[User])
+@app.get("/users", response_model=List[User])  # Fixed: Changed "/user" to "/users"
 async def list_users(skip: int=0, limit: int=100, db: Session = Depends(get_db)):
-    """"Get all users"""
+    """Get all users"""
     users = db.query(UserDB).offset(skip).limit(limit).all()
     return users
 
-@app.get("/user/{user_id}", response_model=User)
-async def get_user_byid (user_id: str, db: Session = Depends(get_db)):
+@app.get("/users/{user_id}", response_model=User)  # Fixed: Changed "/user" to "/users"
+async def get_user_byid(user_id: str, db: Session = Depends(get_db)):
     """Get a user by ID"""
     db_user = db.query(UserDB).filter(UserDB.id == user_id).first()
     if db_user is None:

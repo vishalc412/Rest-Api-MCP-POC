@@ -27,7 +27,7 @@ async def handle_list_tools() -> list[types.Tool]:
     """List all tools available in the API."""
     return [
         types.Tool(
-            name="Create User",
+            name="create_user",  # Fixed: lowercase with underscore
             description="Create a new user",
             inputSchema={
                 "type": "object",
@@ -40,7 +40,7 @@ async def handle_list_tools() -> list[types.Tool]:
             }
         ),
         types.Tool(
-            name="Get User",
+            name="get_user",  # Fixed: lowercase with underscore
             description="Get a user by ID",
             inputSchema={
                 "type": "object",
@@ -51,7 +51,7 @@ async def handle_list_tools() -> list[types.Tool]:
             }
         ),
         types.Tool(
-            name="List Users",
+            name="list_users",  # Fixed: lowercase with underscore
             description="List all users",
             inputSchema={
                 "type": "object",
@@ -64,21 +64,21 @@ async def handle_list_tools() -> list[types.Tool]:
     ]
 
 @server.call_tool()
-async def handle_call_tool( name: str, arguments: dict | None)-> list[types.TextContent|types.ImageContent|types.EmbeddedResource]:
+async def handle_call_tool(name: str, arguments: dict | None) -> list[types.TextContent|types.ImageContent|types.EmbeddedResource]:
     try:
-        if name =="create_user":
+        if name == "create_user":
             result = await api_call("POST", "/users", data=arguments)
-            return [types.TextContent(type="text",text=f"User created:\n{json.dumps(result,indent=2)}")]
+            return [types.TextContent(type="text", text=f"User created:\n{json.dumps(result, indent=2)}")]
         elif name == "get_user":
             user_id = arguments.get("user_id")
             if not user_id:
                 raise ValueError("user_id is required")
-            result = await api_call("GET", f"/user/{user_id}")
+            result = await api_call("GET", f"/users/{user_id}")  # Fixed: /users/ instead of /user/
             return [types.TextContent(type="text", text=f"User details:\n{json.dumps(result, indent=2)}")]
         elif name == "list_users":
             skip = arguments.get("skip", 0)
             limit = arguments.get("limit", 100)
-            result = await api_call("GET", f"/user?skip={skip}&limit={limit}")
+            result = await api_call("GET", f"/users?skip={skip}&limit={limit}")  # Fixed: /users instead of /user
             return [types.TextContent(type="text", text=f"Users:\n{json.dumps(result, indent=2)}")]
         else:
             raise ValueError(f"Unknown tool name: {name}")
@@ -91,41 +91,41 @@ async def handle_list_resources() -> list[types.Resource]:
     """List all resources available in the API."""
     return [
         types.Resource(
-            uri = "user-api://stats",
-            name = "User Stats",
-            description = "Statistics about the user API",
-            mimeType= "application/json"
+            uri="user-api://stats",
+            name="User Stats",
+            description="Statistics about the user API",
+            mimeType="application/json"
         )
     ]
 
 @server.read_resource()
-async def handle_read_resources(uri: str) -> str:
+async def handle_read_resource(uri: str) -> str:  # Fixed: handle_read_resource instead of handle_read_resources
     """Read a resource by URI."""
     if uri == "user-api://stats":
         users = await api_call("GET", "/users?limit=1000")
 
-        stats ={
+        stats = {
             "total_users": len(users),
             "average_age": sum(user.get("age", 0) for user in users) / len(users) if users else 0,
             "user_emails": [user["email"] for user in users]
         }
         return json.dumps(stats, indent=2)
-    return ValueError(f"Unknown resource URI: {uri}")
+    raise ValueError(f"Unknown resource URI: {uri}")  # Fixed: raise instead of return
 
 async def run():
-    async with mcp.server.stdio.stdio_Server() as (read_stream, write_stream):
+    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):  # Fixed: stdio_server instead of stdio_Server
         await server.run(
             read_stream,
             write_stream,
             InitializationOptions(
                 server_name="user-api-mcp",
                 server_version="1.0.0",
-                capabilities= server.get_capabilities(
+                capabilities=server.get_capabilities(
                     notification_options=NotificationOptions(),
                     experimental_capabilities={}
                 )
             )
         )
+
 if __name__ == "__main__":
     asyncio.run(run())
-        

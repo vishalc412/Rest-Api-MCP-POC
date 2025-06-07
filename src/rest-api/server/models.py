@@ -10,7 +10,8 @@ Base = declarative_base()
 
 class UserDB(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, default= lambda: str(uuid.uuid4()))
+    # Fixed: String type for UUID primary key instead of Integer
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     age = Column(Integer)
@@ -28,8 +29,7 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     name: Optional[str] = Field(None, min_length=3, max_length=100)
     age: Optional[int] = Field(None, ge=18, le=100)
-    email: Optional[EmailStr] = Field(None, unique=True)
-
+    email: Optional[EmailStr] = Field(None)  # Removed 'unique=True' as it's not valid for Pydantic fields
 
 
 class User(UserBase):
@@ -40,8 +40,9 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
-engine = create_engine("sqlite+aiosqlite:///./users.db")
+# Fixed: Use regular sqlite instead of aiosqlite for synchronous operations
+engine = create_engine("sqlite:///./users.db")
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-#create all tables in the database
+# Create all tables in the database
 Base.metadata.create_all(bind=engine)
