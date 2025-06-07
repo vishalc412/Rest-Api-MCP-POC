@@ -1,0 +1,16 @@
+# API Dependencies
+fastapi>=0.108.0
+uvicorn>=0.25.0
+pydantic>=2.5.3
+sqlalchemy>=2.0.23
+aiosqlite>=0.19.0
+
+# MCP Dependencies
+mcp>=0.9.1
+aiohttp>=3.9.1
+
+# Testing
+httpx>=0.25.2
+pytest>=7.4.3
+pytest-asyncio>=0.21.1
+

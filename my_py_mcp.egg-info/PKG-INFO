@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: my-py-mcp
+Version: 0.1.0
+Summary: My MCP For Rest APIs
+Author-email: Vishal Chawla <vishalc412@gmail.com>
+Requires-Python: >=3.8
+Requires-Dist: requests
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Requires-Dist: pydantic
+Requires-Dist: sqlalchemy
+Requires-Dist: aiosqlite
+Requires-Dist: mcp
+Requires-Dist: aiohttp
+Requires-Dist: httpx
+Requires-Dist: pytest
+Requires-Dist: pytest-asyncio

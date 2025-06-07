@@ -1,0 +1,11 @@
+requests
+fastapi
+uvicorn
+pydantic
+sqlalchemy
+aiosqlite
+mcp
+aiohttp
+httpx
+pytest
+pytest-asyncio
