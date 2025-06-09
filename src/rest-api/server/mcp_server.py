@@ -1,4 +1,6 @@
 import json
+import logging
+import sys
 from typing import Optional
 import aiohttp
 from mcp.server import Server, NotificationOptions
@@ -10,6 +12,13 @@ import asyncio
 server = Server("user-api-mcp")
 
 API_BASE_URL = "http://localhost:8000"
+# Configure logging to stderr to avoid stdio conflicts
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stderr)]
+)
+logger = logging.getLogger(__name__)
 
 async def api_call(method: str, endpoint: str, data: Optional[dict] = None) -> dict:
     async with aiohttp.ClientSession() as session:
@@ -113,19 +122,30 @@ async def handle_read_resource(uri: str) -> str:  # Fixed: handle_read_resource 
     raise ValueError(f"Unknown resource URI: {uri}")  # Fixed: raise instead of return
 
 async def run():
-    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):  # Fixed: stdio_server instead of stdio_Server
-        await server.run(
-            read_stream,
-            write_stream,
-            InitializationOptions(
-                server_name="user-api-mcp",
-                server_version="1.0.0",
-                capabilities=server.get_capabilities(
-                    notification_options=NotificationOptions(),
-                    experimental_capabilities={}
+    try:
+        logger.info("Starting MCP server...")
+        async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
+            await server.run(
+                read_stream,
+                write_stream,
+                InitializationOptions(
+                    server_name="user-api-mcp",
+                    server_version="1.0.0",
+                    capabilities=server.get_capabilities(
+                        notification_options=NotificationOptions(),
+                        experimental_capabilities={},
+                    )
                 )
             )
-        )
+    except Exception as e:
+        logger.error(f"Server error: {e}", exc_info=True)
+        sys.exit(1)
 
 if __name__ == "__main__":
-    asyncio.run(run())
+    try:
+        asyncio.run(run())
+    except KeyboardInterrupt:
+        logger.info("Server stopped by user")
+    except Exception as e:
+        logger.error(f"Fatal error: {e}", exc_info=True)
+        sys.exit(1)

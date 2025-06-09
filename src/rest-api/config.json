@@ -1,11 +1,15 @@
 {
     "mcpServers": {
       "user-api": {
-        "command": "python",
+        "command": "python3",
         "args": ["src/rest-api/server/mcp_server.py"],
         "env": {
           "PYTHONPATH": "/Users/vishalchawla/POC/PYCODE"
         }
+      },
+      "test-mcp": {
+        "command": "python3",
+        "args": ["/Users/vishalchawla/POC/PYCode/src/rest-api/server/test_mcp_server.py"]
       }
     }
   }
