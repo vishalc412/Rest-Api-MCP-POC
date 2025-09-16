@@ -27,7 +27,10 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/logo.png" />
         <meta name="theme-color" content="#6366f1" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden`}>
+      <body 
+        className={`${inter.variable} font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden`}
+        suppressHydrationWarning={true}
+      >
         <div id="root" className="h-screen w-full">
           {children}
         </div>

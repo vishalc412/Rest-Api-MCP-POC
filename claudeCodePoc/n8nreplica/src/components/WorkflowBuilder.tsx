@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -41,14 +41,31 @@ function WorkflowBuilderInner() {
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [nodeCounter, setNodeCounter] = useState(0);
   
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const { project, getViewport } = useReactFlow();
 
+  // Generate unique ID for nodes without using Date.now() to avoid hydration issues
+  const generateNodeId = useCallback((type: string) => {
+    const id = `${type}-${nodeCounter}`;
+    setNodeCounter(prev => prev + 1);
+    return id;
+  }, [nodeCounter]);
+
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => {
+      console.log('Connection attempt:', params);
+      setEdges((eds) => addEdge(params, eds));
+    },
     [setEdges]
   );
+
+  const isValidConnection = useCallback((connection: Connection) => {
+    // Allow all connections for now - can add validation later
+    console.log('Validating connection:', connection);
+    return true;
+  }, []);
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
     setSelectedNode(node as WorkflowNode);
@@ -84,7 +101,7 @@ function WorkflowBuilderInner() {
       });
 
       const newNode: Node = {
-        id: `${template.type}-${Date.now()}`,
+        id: generateNodeId(template.type),
         type: 'customNode',
         position,
         data: {
@@ -103,7 +120,7 @@ function WorkflowBuilderInner() {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [project, setNodes]
+    [project, setNodes, generateNodeId]
   );
 
   const handleTemplateUpload = useCallback((uploadedTemplates: ComponentTemplate[]) => {
@@ -262,6 +279,7 @@ function WorkflowBuilderInner() {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            isValidConnection={isValidConnection}
             onNodeClick={onNodeClick}
             onEdgeClick={onEdgeClick}
             onDrop={onDrop}
@@ -271,6 +289,7 @@ function WorkflowBuilderInner() {
             minZoom={0.1}
             maxZoom={2}
             defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+            connectionMode="loose"
           >
             <Background 
               gap={20} 

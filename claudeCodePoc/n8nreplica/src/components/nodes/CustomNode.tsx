@@ -35,8 +35,10 @@ const getNodeTypeColor = (type: string) => {
 
 const CustomNode = memo(({ data, selected }: NodeProps<CustomNodeData>) => {
   const nodeColor = getNodeTypeColor(data.nodeType);
-  const hasInputs = data.nodeType !== 'trigger';
-  const hasOutputs = data.nodeType !== 'output';
+  
+  // Improved logic for handles based on actual inputs and outputs
+  const hasInputs = data.inputs && data.inputs.length > 0;
+  const hasOutputs = data.outputs && data.outputs.length > 0;
 
   return (
     <div className={`ai-custom-node ${selected ? 'selected' : ''}`}>
@@ -45,6 +47,7 @@ const CustomNode = memo(({ data, selected }: NodeProps<CustomNodeData>) => {
         <Handle
           type="target"
           position={Position.Left}
+          id="input"
           style={{
             background: nodeColor,
             border: '3px solid white',
@@ -98,6 +101,7 @@ const CustomNode = memo(({ data, selected }: NodeProps<CustomNodeData>) => {
         <Handle
           type="source"
           position={Position.Right}
+          id="output"
           style={{
             background: nodeColor,
             border: '3px solid white',

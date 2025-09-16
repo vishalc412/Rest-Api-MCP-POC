@@ -12,7 +12,15 @@ export const defaultComponents: ComponentTemplate[] = [
     description: 'Intelligent AI agent for autonomous task execution',
     functionality: 'Advanced AI agent with natural language processing and decision-making capabilities',
     operation: 'agent_smart_execute',
-    inputs: [],
+    inputs: [
+      {
+        id: 'trigger-data',
+        name: 'Trigger Data',
+        type: 'object',
+        required: false,
+        description: 'Optional data from previous node',
+      },
+    ],
     outputs: [
       {
         id: 'agent-response',
