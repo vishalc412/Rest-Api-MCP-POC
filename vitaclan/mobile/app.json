@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "VitaClan",
+    "slug": "vitaclan",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a1a2e"
+    },
+    "scheme": "vitaclan",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "in.vitaclan.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "VitaClan needs camera to scan prescriptions and lab reports.",
+        "NSMicrophoneUsageDescription": "VitaClan uses microphone for voice queries about your health.",
+        "NSPhotoLibraryUsageDescription": "VitaClan needs photo library to upload existing medical records.",
+        "NSHealthShareUsageDescription": "VitaClan reads health data to correlate with your medical records.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "in.vitaclan.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a1a2e"
+      },
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "INTERNET",
+        "VIBRATE",
+        "RECEIVE_BOOT_COMPLETED"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      ["expo-camera", { "cameraPermission": "Allow VitaClan to access camera for scanning documents." }],
+      ["expo-notifications", { "icon": "./assets/notification-icon.png", "color": "#1a1a2e" }],
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": { "projectId": "your-eas-project-id" }
+    }
+  }
+}

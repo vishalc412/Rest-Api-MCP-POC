@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Env
+.env
+*.env.local
+
+# Node
+node_modules/
+.expo/
+dist/
+*.log
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+build/
+*.apk
+*.ipa
+*.aab
+
+# DB dumps
+*.sql.gz
+*.dump
+
+# Secrets
+firebase-credentials.json
+gcp-credentials.json
